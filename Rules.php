@@ -20,6 +20,7 @@ class GroupDisciplineAvailable extends Rule
         $group = $entry->getGroup();
         $discipline = $entry->getDiscipline();
 
+
         return $group->hasDiscipline($discipline);//if 1
     }
 }
