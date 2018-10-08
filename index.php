@@ -176,7 +176,7 @@ function calculateKt($restricts, $time, $groups, $disciplines, $lecturers)
     foreach ($groups as $group) {
         foreach ($disciplines as $discipline) {
             foreach ($lecturers as $lecturer) {
-                $entry = new ScheduleEntry($time, $discipline->getId(), $lecturer->getId(), $group->getId());
+                $entry = new ScheduleEntry($time, $discipline, $lecturer, $group);
                 $localG = calculateLocalGroupKf($restricts, $entry);
                 if ($localG === 0) {
                     continue;
@@ -204,6 +204,7 @@ function calculateKt($restricts, $time, $groups, $disciplines, $lecturers)
 }
 
 // TODO: сгенерировать пример eventsTimes
+// TODO: Исключть из наборов данные которы уже распределены;
 function distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lecturers)
 {
     $distributedSchedule = array();
