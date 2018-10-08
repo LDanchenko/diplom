@@ -1,32 +1,28 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: lubasha
- * Date: 06.10.2018
- * Time: 13:46
+ * User: root
+ * Date: 08.10.18
+ * Time: 10:44
  */
-//G
-//группы = имя групы дисциплина
-class Groups
+//D
+class discipline
 {
 public $id;
 public $name;
-public $discipline; //
-
+public $time;
 
     /**
-     * Groups constructor.
+     * discipline constructor.
      * @param $id
      * @param $name
-     * @param $discipline
      * @param $time
      */
-    public function __construct($id, $name, $discipline, $time)
+    public function __construct($id, $name, $time)
     {
         $this->id = $id;
         $this->name = $name;
-        $this->discipline = $discipline;
-
+        $this->time = $time;
     }
 
     /**
@@ -64,19 +60,17 @@ public $discipline; //
     /**
      * @return mixed
      */
-    public function getDiscipline()
+    public function getTime()
     {
-        return $this->discipline;
+        return $this->time;
     }
 
     /**
-     * @param mixed $discipline
+     * @param mixed $time
      */
-    public function setDiscipline($discipline)
+    public function setTime($time)
     {
-        $this->discipline = $discipline;
+        $this->time = $time;
     }
-
-
 
 }
