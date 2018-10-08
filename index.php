@@ -2,118 +2,253 @@
 require_once('Teacher.php');
 require_once('Limit.php');
 require_once('Groups.php');
-require_once('Schedule.php');
+require_once('ScheduleEntry.php');
 
-//
-//$limit = new Limit();
-//$limit->setDay("19.09.2018");
-//$limit->setTimeStart("09:00");
-//$limit->setTimeEnd("12.00");
-//$limit2 = new Limit();
-//$limit2->setDay("20.09.2018");
-//$limit2->setTimeStart("09:00");
-//$limit2->setTimeEnd("12.00");
-//
-//$array[] = [$limit, $limit2];
-//$array2[] = [$limit];
-//
-//$teacher = new Teacher(1, "Данченко", $array, 5, "math", 20);
-//$teacher2 = new Teacher(2, "ДАДАД", $array2, 5, "math", 20);
-//
-//$group = new Groups(1, "KN17", "math", 20);
-//
-////print_r($group);
-//
-//$mas[] = [$teacher, $teacher2];
-//
-////foreach($mas as $value){
-//// $array3[]= $value->limit;
-//// var_dump($value);
-//// foreach ($array3 as $value2) {
-////    var_dump($value2);
-//// echo "<br/>";
-////echo "<br/>";
 
-//}
-const NUM_OF_CLS = 3; // оКоличество китериальних класов заисимих от вибраного критнрия.
-const PRIORITY_G = 0.25;
-const PRIORITY_D = 0.25;
-const PRIORITY_L = 0.5;
+const PRIORITY_G = 0.25; //приоритет группы
+const PRIORITY_D = 0.25; //дисциплині
+const PRIORITY_L = 0.5; //преподы
 const CLS_GROUPS = "group";
 const CLS_DISCIPLINE = "discipline";
 const CLS_TIME = "time";
 const CLS_TEACHERS = "teacher";
-// Вибраний крит. время.
-//$time -время дата пары
 
-function getEnumHash($a, $b)
-{
-    return $a . ', ' . $b;
-}
+const INTERSECT_CLS_GROUP_TIME = "INTERSECT_CLS_GROUP_TIME";
+const INTERSECT_CLS_GROUP_DISCIPLINE = "INTERSECT_CLS_GROUP_DISCIPLINE";
+const INTERSECT_CLS_GROUP_LECTURER = "INTERSECT_CLS_GROUP_LECTURER";
+const INTERSECT_CLS_DISCIPLINE_TIME = "INTERSECT_CLS_DISCIPLINE_TIME";
+const INTERSECT_CLS_DISCIPLINE_LECTURER = "INTERSECT_CLS_DISCIPLINE_LECTURER";
+const INTERSECT_CLS_LECTURER_TIME = "INTERSECT_CLS_LECTURER_TIME";
 
 $restricts[] = array(
-    getEnumHash(CLS_GROUPS, CLS_TIME) => array(), //ограничения
-    getEnumHash(CLS_GROUPS, CLS_DISCIPLINE) => array(),
-    getEnumHash(CLS_GROUPS, CLS_TEACHERS) => array(),
-    getEnumHash(CLS_DISCIPLINE, CLS_TIME) => array(),
-    getEnumHash(CLS_DISCIPLINE, CLS_TEACHERS) => array(),
-    getEnumHash(CLS_TEACHERS, CLS_TIME) => array(),
+    INTERSECT_CLS_GROUP_TIME => array(), //екземпляры обьектов правил
+    INTERSECT_CLS_GROUP_DISCIPLINE => array(),
+    INTERSECT_CLS_GROUP_LECTURER => array(),
+    INTERSECT_CLS_DISCIPLINE_TIME => array(),
+    INTERSECT_CLS_DISCIPLINE_LECTURER => array(),
+    INTERSECT_CLS_LECTURER_TIME => array(),
 );
-function KT($time): float
-{
-  //  $result =
-    //return $result
-}
 
-//function findClassUnions($classA, $classB, $restricts): array
-//{
-//    $result = array();
-//    foreach ($restricts as $key => $value) {
-//        list($restrictA, $restrictB) = explode(", ", $key);
-//        if ($restrictA === $classA || $restrictA === $classB ||
-//            $restrictB === $classA || $restrictB === $classB) {
-//            $result[] = $key;
-//        }
-//    }
+
+const NUM_OF_EVENTS_IN_PERIOD = 20; //пар в неделю - посчитать
+const NUM_OF_EVENTS_PER_DAY = 4; //пар в день
+
+//ruleinst - екземпляр абстрактн класса rule
 //
-//    return $result;
-//}
-
-
-function Local_K($priority, $restricts, $localclas): float
+function getClassRuleValue($ruleInstance, $entry)
 {
-    $values[] = array();
-    $masiv[] = array();
-    foreach ($localclas as $value){
-       // list($restrictA, $restrictB) = explode(", ", $value);
-        //array_push($masiv, findClassUnions($restrictA, $restrictB, $restricts));
-      //  $value
-    }
-    $masiv [] = array_unique($masiv);
-
-    weight_fm(max($masiv), $priority);
-    //&????
-
+    //вызо метода обьекта унаследованного от абс клас
+    $method = array($ruleInstance, 'calculate');
+    $arguments = array($entry);
+    $value = call_user_func_array($method, $arguments);
+    return $value;
 }
 
-function weight_fm($priority, $val): float
+//rules - части restrict
+function getClassRuleValues($rules, $entry)
 {
-    $result = normalizate_value($val) * $priority;
-    return $result;
+    $values = array();
+    foreach ($rules as $rule) {
+        $value = getClassRuleValue($rule, $entry);
 
-}
-
-//нормализация значений
-function normalizate_value(... $values): float
-{
-    $result = 0;
-    foreach ($values as $value) {
-        if ($value == 0) {
-            $value = 0.0000001;
+        if ($value === 0) {
+            return 0;
         }
-        $result += floatval($value);
+
+        $values[] = $value;
     }
-    return $result / count($values);
 
-
+    return array_sum($values) / count($values);
 }
+
+//вызов правил
+function calculateLocalClassValue($entry, $weight, $classes)
+{
+    $values = array();
+    foreach ($classes as $cls) {
+        $value = getClassRuleValues($cls, $entry); //вызываем правила на обьекты класса
+
+        if ($value === 0) {
+            return 0;
+        }
+
+        $values[] = $value; // в массив все получнный значения
+    }
+
+    $kf = array_sum($values) / count($values); //среднее передали
+
+    return calculateLocalWight($kf, $weight);//вес это приоритет
+}
+
+//TODO: разставить класи в порядке следоватльности от первого наиболее вероятного 0.
+//высчитать коефициент групп
+function calculateLocalGroupKf($restricts, $entry)
+{
+    $weight = PRIORITY_G;
+    $classes = array(
+        $restricts(INTERSECT_CLS_GROUP_TIME),
+        $restricts(INTERSECT_CLS_GROUP_DISCIPLINE),
+        $restricts(INTERSECT_CLS_GROUP_LECTURER),
+    );
+
+    return calculateLocalClassValue($entry, $weight, $classes);
+}
+
+//коефдисц
+function calculateLocalDisciplineKf($restricts, $entry)
+{
+    $weight = PRIORITY_D;
+    $classes = array(
+        $restricts(INTERSECT_CLS_GROUP_DISCIPLINE),
+        $restricts(INTERSECT_CLS_DISCIPLINE_TIME),
+        $restricts(INTERSECT_CLS_DISCIPLINE_LECTURER),
+    );
+
+    return calculateLocalClassValue($entry, $weight, $classes);
+}
+
+//по преподам
+function calculateLocalLecturerKf($restricts, $entry)
+{
+    $weight = PRIORITY_L;
+    $classes = array(
+        $restricts(INTERSECT_CLS_GROUP_LECTURER),
+        $restricts(INTERSECT_CLS_LECTURER_TIME),
+        $restricts(INTERSECT_CLS_DISCIPLINE_LECTURER),
+    );
+
+    return calculateLocalClassValue($entry, $weight, $classes);
+}
+
+function calculateClassValue($localValues)
+{
+    return array_sum($localValues) / count($localValues);
+}
+
+//??? нормалищация - не используется - всунуть
+function normalize($value, $minLimitValue, $maxLimitValue)
+{
+    $maxLimitValue = $maxLimitValue - $minLimitValue;
+
+    if ($maxLimitValue === 0) {
+        $maxLimitValue = 1;
+    }
+
+    return ($value - $minLimitValue) - $maxLimitValue;
+}
+
+function calculateLocalWight($localKf, $weight)
+{
+    return $localKf ^ (1 / $weight); //приоритет - weight
+}
+
+//определяем колличество значений для итерации
+function calculateBatchSize($numOfEvents, $minNumOfEvents)
+{
+    return max(array(
+        sqrt($numOfEvents),
+        ceil($minNumOfEvents),
+    ));
+}
+
+function createFlatArray($array)
+{
+    // TODO: 1 массив из массивов
+    return $array;
+}
+
+function clsHasIntersect($collection, $value)
+{
+    //TODO:
+    //$collection -
+
+    return false;
+}
+
+$disciplines = array();
+$groups = array();
+$lecturers = array();
+
+function calculateKt($restricts, $time, $groups, $disciplines, $lecturers)
+{
+    $values = array();
+
+    foreach ($groups as $group) {
+        foreach ($disciplines as $discipline) {
+            foreach ($lecturers as $lecturer) {
+                $entry = new ScheduleEntry($time, $discipline->getId(), $lecturer->getId(), $group->getId());
+                $localG = calculateLocalGroupKf($restricts, $entry);
+                if ($localG === 0) {
+                    continue;
+                }
+
+                $localD = calculateLocalDisciplineKf($restricts, $entry);
+                if ($localD === 0) {
+                    continue;
+                }
+
+                $localL = calculateLocalLecturerKf($restricts, $entry);
+                if ($localL === 0) {
+                    continue;
+                }
+
+                $key = $entry->hash();
+                $dsClasses = [$localG, $localD, $localL];
+                $kf = array_sum($dsClasses) / count($dsClasses);
+                $values[$key] = $kf;
+            }
+        }
+    }
+
+    return $values;
+}
+
+// TODO: сгенерировать пример eventsTimes
+function distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lecturers)
+{
+    $distributedSchedule = array();
+    $conflicts = array();
+    $batchSize = calculateBatchSize(
+        NUM_OF_EVENTS_IN_PERIOD,
+        NUM_OF_EVENTS_PER_DAY
+    );
+
+    // TODO: Макс количество прходов.
+    // TODO: Остались ли нераспределение пари...
+    while (true) {
+        $availableToDistribute = count($eventsTimes);
+        $batchToDistribute = array();
+
+        foreach ($eventsTimes as $time) {
+            $values = calculateKt($restricts, $time, $groups, $disciplines, $lecturers);
+            sort($values);
+            $values = array_slice($values, 0, $batchSize);
+            $batchToDistribute[] = $values;
+        }
+
+        for ($i = 0; $i < $availableToDistribute; $i++) {
+            $batchToDistribute = createFlatArray($batchToDistribute);
+            sort($batchToDistribute);
+
+            foreach ($batchToDistribute as $value) {
+                if (clsHasIntersect($distributedSchedule, $value) || clsHasIntersect($conflicts, $value)) {
+                    $conflicts[] = $value;
+                    continue;
+                }
+
+                $distributedSchedule[] = $value;
+            }
+        }
+
+        $conflicts = array();
+    }
+
+    return $distributedSchedule;
+}
+
+// TODO: Заполнить необходимими парами...
+$eventsTimes = array();
+
+
+$schedule = distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lecturers);
+var_dump($schedule);
