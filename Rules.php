@@ -29,6 +29,7 @@ abstract class Rules
                 return 1;
             }
         else return 0;
+
     }
 
 
