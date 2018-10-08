@@ -147,7 +147,7 @@ function calculateBatchSize($numOfEvents, $minNumOfEvents)
 {
     return max(array(
         sqrt($numOfEvents),
-        ceil($minNumOfEvents),
+        ceil($minNumOfEvents), //округление к большенй
     ));
 }
 
@@ -213,13 +213,17 @@ function distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lect
         NUM_OF_EVENTS_PER_DAY
     );
 
-    // TODO: Макс количество прходов.
+    // TODO: Макс количество прходов.whilt остались липарі - еслиза 5 проходов не прошло то стоп
     // TODO: Остались ли нераспределение пари...
     while (true) {
-        $availableToDistribute = count($eventsTimes);
+        $availableToDistribute = count($eventsTimes) - count($distributedSchedule);
         $batchToDistribute = array();
 
         foreach ($eventsTimes as $time) {
+            // TODO: if $time not alredy distributed...
+            if (false) {
+                continue;
+            }
             $values = calculateKt($restricts, $time, $groups, $disciplines, $lecturers);
             sort($values);
             $values = array_slice($values, 0, $batchSize);
