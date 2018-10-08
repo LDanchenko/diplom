@@ -5,6 +5,7 @@
  * Date: 08.10.18
  * Time: 10:59
  */
+//нагрузка на препода группу  + приоритет
 
 abstract class Rules
 {
@@ -13,6 +14,7 @@ abstract class Rules
     //    может в группе еще где то определять время пары?
     }
 
+    //читается ли у группыы дисциполина
     public function GD ( $group_disp, Discipline $discipline)
     {
 
@@ -21,7 +23,7 @@ abstract class Rules
             } else return 0;
 
     }
-
+//тут просто читаем ли препод дисциплину оч важно
     public function GL($group_disp, $teacher_disp){
 
 
@@ -38,17 +40,31 @@ abstract class Rules
             return 1; //вообще никак не влияет - значит 1
     }
 
-    public function DL(Discipline $discipline, Teacher $teacher){
-
-
-       // if ($discipline>)
-        return 1; //вообще никак не влияет - значит 1 - список дисциплин нужен для подставноки в групу ? можно учителю определить нагрузку?:
+    //читает и учитель дисциплину оч важно
+    public function DL(Discipline $discipline, $teacher_disc){
+        if ($teacher_disc == $discipline->name)
+        {
+        return 1;}
+        else return 0;
     //список дисциплин в групе или отдельно?
     }
 
-
-    public function LT(Discipline $discipline, Teacher $teacher){
+//тут у учителя берутся ограничения! - когда может читать!
+//НУЖНО ГДЕ ТО ПРАВИЛО В ПРИОРИТЕТОМ!!!!!
+//тоже непонятно - берем расписание на две недели делаем - тогда ограничения норм - пару дат, для семестра считать что все остальные дни может?
+//как то учесть что он не занят на других парах???
+    public function LT(Time $time, Teacher $teacher){
 //teacher time
+        $limit = new Limit();
+        $limit = $teacher->limit;
+        $date = $limit->date;
+        $time_start = strtotime($limit->time_start); //время когда препод может - начало
+        $time_end = strtotime($limit->time_end); // время когда может - конец
+        if (($time->date==$date)&&($time_start<= $time->time_start)&&($time_end>=$time->time_end)){
+            return 1;
+        }
+        else return 0;
+
 
     }
     //все ли правила?

@@ -61,8 +61,8 @@ $restricts[] = array(
 );
 function KT($time): float
 {
-    $result =
-    return $result
+  //  $result =
+    //return $result
 }
 
 //function findClassUnions($classA, $classB, $restricts): array
@@ -87,7 +87,7 @@ function Local_K($priority, $restricts, $localclas): float
     foreach ($localclas as $value){
        // list($restrictA, $restrictB) = explode(", ", $value);
         //array_push($masiv, findClassUnions($restrictA, $restrictB, $restricts));
-        $value
+      //  $value
     }
     $masiv [] = array_unique($masiv);
 
@@ -114,4 +114,12 @@ function normalizate_value(... $values): float
         $result += floatval($value);
     }
     return $result / count($values);
+
+
 }
+$start = strtotime('06:00:00');
+$end = strtotime('24:00:00');
+if ($start > $end){
+    echo 1;
+}
+else {echo 0;}

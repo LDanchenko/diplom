@@ -12,7 +12,7 @@ class Time
 {
 
     public $date;
-    public $ime_start;
+    public $time_start;
     public $time_end;
 
     /**
@@ -34,17 +34,17 @@ class Time
     /**
      * @return mixed
      */
-    public function getImeStart()
+    public function getTimeStart()
     {
-        return $this->ime_start;
+        return $this->time_start;
     }
 
     /**
      * @param mixed $ime_start
      */
-    public function setImeStart($ime_start)
+    public function setTimeStart($time_start)
     {
-        $this->ime_start = $ime_start;
+        $this->time_start = $time_start;
     }
 
     /**
