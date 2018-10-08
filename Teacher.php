@@ -11,7 +11,7 @@ class Teacher
 {
 public $id;
 public $name;
-public $limit = array();
+public $limit;
 public $coeficient;
 public $discipline;
 public $time;
@@ -25,7 +25,7 @@ public $time;
      * @param $discipline
      * @param $time
      */
-    public function __construct($id, $name, Limit $limit, $coeficient, $discipline, $time)
+    public function __construct($id, $name, Limit $limit, $coeficient, Discipline $discipline, $time)
     {
         $this->id = $id;
         $this->name = $name;

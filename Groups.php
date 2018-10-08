@@ -21,7 +21,7 @@ public $discipline; //
      * @param $discipline
      * @param $time
      */
-    public function __construct($id, $name, $discipline, $time)
+    public function __construct($id, $name,Discipline $discipline, $time)
     {
         $this->id = $id;
         $this->name = $name;

@@ -73,4 +73,14 @@ public $time;
         $this->time = $time;
     }
 
+    public static function searchDisciplineName($id, $array){
+        $name = "";
+        foreach ($array as $item){
+            if ($item->id == $id){
+                $name =  $item->name;
+            }
+        }
+        return $name;
+    }
+
 }
