@@ -117,9 +117,3 @@ function normalizate_value(... $values): float
 
 
 }
-$start = strtotime('06:00:00');
-$end = strtotime('24:00:00');
-if ($start > $end){
-    echo 1;
-}
-else {echo 0;}
