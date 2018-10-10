@@ -2,8 +2,8 @@
 
 
 class KeyValueMapStorage implements Countable, Iterator, ArrayAccess {
-    private $storageKeys;
-    private $storageValues;
+    private $storageKeys; //обьекты класса
+    private $storageValues; //коефициенты - массив?
 
     public function __construct() {
         $this->storageKeys = new SplObjectStorage();
@@ -57,11 +57,11 @@ class KeyValueMapStorage implements Countable, Iterator, ArrayAccess {
 
         return $this->storageValues[$value];
     }
-
+//$n - пар для распеределения , из times. ????
     public function topByValue($n, $randomize = false) {
         $result = new KeyValueMapStorage();
-        $sortedValues = array_keys($this->storageValues);
-        rsort($sortedValues);
+        $sortedValues = array_keys($this->storageValues); // ключи по коеф?
+        rsort($sortedValues); //от большего к меньшему
 
         $currentIndex = 0;
         $resultSize = 0;

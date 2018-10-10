@@ -5,17 +5,19 @@ class Lecturer {
     private $id;
     private $name;
     private $disciplines;
-
+    private $limits;
     /**
      * Lecturer constructor.
      * @param $id
      * @param $name
      * @param $disciplines
      */
-    public function __construct($id, $name, $disciplines) {
+    //limits по сути тоже что и time убарть? запутаюсь
+    public function __construct($id, $name, $disciplines,$limits) {
         $this->id = $id;
         $this->name = $name;
         $this->disciplines = $disciplines;
+        $this->limits = $limits;
     }
 
     /**
@@ -51,6 +53,22 @@ class Lecturer {
      */
     public function getDisciplines() {
         return $this->disciplines;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLimits()
+    {
+        return $this->limits;
+    }
+
+    /**
+     * @param mixed $limits
+     */
+    public function setLimits($limits): void
+    {
+        $this->limits = $limits;
     }
 
     /**
