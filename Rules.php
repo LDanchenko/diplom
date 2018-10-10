@@ -2,7 +2,7 @@
 
 
 abstract class Rule {
-    const DEFAULT_PRIORITY = 5;
+    const DEFAULT_PRIORITY = 5; // 1 - 10
     private $priority;
 //чего не передаем в функцию?
     /**
@@ -30,7 +30,7 @@ abstract class Rule {
 }
 
 
-class GroupDisciplineAvailable extends Rule {
+class GroupDisciplineAvailable extends Rule {//екземпл класс собственн приоритет задавать
     public function calculate(ScheduleEntry $entry) {
         $group = $entry->getGroup();
         $discipline = $entry->getDiscipline();
@@ -53,19 +53,20 @@ class DisciplineLectureAvailableToEducationDiscipline extends Rule
 
 }
 //???
-    class GroupTimeAvailable extends Rule {
-
-    public function calculate(ScheduleEntry $entry)
-    {
-        $time = $entry -> getTime();
-        //  группа свободна ли для этой пары?
-        //проверить рассписание что заполнено на это время:?
-
-
-        return null;
-    }
-
-}
+//    class GroupTimeAvailable extends Rule {
+//
+//    public function calculate(ScheduleEntry $entry)
+//    {
+//        return true;
+//        //$time = $entry -> getTime();
+//        //  группа свободна ли для этой пары?
+//        //проверить рассписание что заполнено на это время:?
+//
+//
+//      //  return null;
+//    }
+//
+//}
 
 
 //ведет ли у группы проепод
@@ -77,27 +78,27 @@ class DisciplineLectureAvailableToEducationDiscipline extends Rule
         $lecturer = $entry->getLecturer();
         $group = $entry->getGroup();
         //если препод ведет дисциплину и у группы читается эта дисциплина
-        if (((float)$lecturer->hasDiscipline($discipline) && (float)$group->hasDiscipline($discipline)) == true){
-            return true;
+        if (($lecturer->hasDiscipline($discipline) && $group->hasDiscipline($discipline)) == true){
+            return 1;
         }
-        else return false;
-
+        else return 0;
+//разделить на два правила
     }
 
 }
 
 ///???
-class DisciplineTimeAvailable extends Rule {
-
-    public function calculate(ScheduleEntry $entry)
-    {
-       //тут непонятно?
-//time - то что определили в  buildEventsTimes
-
-        return null;
-    }
-
-}
+//class DisciplineTimeAvailable extends Rule {
+//
+//    public function calculate(ScheduleEntry $entry)
+//    {
+//       //тут непонятно?
+////time - то что определили в  buildEventsTimes
+//
+//        return null;
+//    }
+//
+//}
 
 
 class TimeLecture extends Rule{

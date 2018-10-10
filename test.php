@@ -16,7 +16,6 @@ $lectureTime->setTime(14,03);
 $timeLec = new Time($lectureTime, 80); //время лекции
 
 
-
 $limit1Start = new DateTime(
     gmdate('d.m.Y H:i', strtotime('2018-10-08')),
     new DateTimeZone('GMT'));
@@ -61,7 +60,8 @@ foreach ($lim_lect as $limit){
     $dayLectureEnd = $endLecture->format('d.m.Y');
 
     //  echo 'day 2' . $day2;
-    if (($day == $dayLectureEnd) && ($day == $dayLectureStart)){
+    if (($day == $dayLectureEnd) && ($day == $dayLectureStart)){ // пример одного дня- переделать для многих дней
+
         $minutesParaStart = ($timePara->format('H'))*60 + ((int)($timePara->format('i')));
         $minutesParaEnd = $minutesParaStart + $timeLec->getDurationInMinutes();
      //   echo 'старт пары ' . $minutesParaStart . ' ';

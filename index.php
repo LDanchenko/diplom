@@ -32,9 +32,9 @@ const ADDITIONAL_RETRY_TIMES_COUNT = 3; //попыток?
  *       им необходимо прописать соответствующее правило(Rule). Данный же параметр является глобальным для всех груп
  *       одновременно.
  */
-const EDUCATION_WEEKDAYS = array(false, true, false, false, false, false, false); //понедельник? TODO: в какие дни группа учится из БД
+const EDUCATION_WEEKDAYS = array(false, true, false, false, false, false, false); //понедельник - 1 TODO: в какие дни группа учится из БД
 
-const NUM_OF_EVENTS_IN_PERIOD = 20; //пар в неделю - посчитать
+const NUM_OF_EVENTS_IN_PERIOD = 20; //сколько за указанній период пар - указать - посчитать
 const NUM_OF_EVENTS_PER_DAY = 4; //пар в день
 const SCHEDULE_PERIOD_EDUCATION_DAYS_LENGTH = NUM_OF_EVENTS_IN_PERIOD / NUM_OF_EVENTS_PER_DAY; //к-во учебных дней TODO: задавать конец периода и считать данные параметры
 
@@ -43,7 +43,7 @@ const SCHEDULE_PERIOD_EDUCATION_DAYS_LENGTH = NUM_OF_EVENTS_IN_PERIOD / NUM_OF_E
 //вызываем правила из RULE для разных классов рахные и считаем коефициенты
 function callRuleCalculations(Rule $ruleInstance, $entry) {
     $value = $ruleInstance->calculate($entry); // calculate вызываем из класса
-    $priority = $ruleInstance->getPriority(); //получаем приоритет - setPriority  где?
+    $priority = $ruleInstance->getPriority(); //получаем приоритет - setPriority  RULEі к классам дописать контрукторы
     return Utils::applyWeightImpact($value, $priority); //приоритет + вес
 }
 
@@ -70,7 +70,7 @@ function getClassRuleValues($rules, $entry) {
     return array_sum($values) / $rulesCount; //среднее - все коеф. на кол-во правил/классов
 }
 
-//вызов правил - опять среднее? getClassRuleValues
+// getClassRuleValues- кол правил и классов!!!!!!
 function calculateLocalClassCoefficient($entry, $weight, $classes) {
     $values = array();
     foreach ($classes as $cls) {
@@ -93,7 +93,7 @@ function calculateLocalClassCoefficient($entry, $weight, $classes) {
     //среднее передали
     $localClassCoefficient = array_sum($values) / $valuesCount;
 
-    //вес это приоритет - опять применили вес?
+    //вес это приоритет
     return Utils::applyWeightImpact($localClassCoefficient, $weight);
 }
 
@@ -294,7 +294,6 @@ $schedulePeriodStartDate = new DateTime(
 $eventsTimes = buildEventsTimes(
     $schedulePeriodStartDate,
     SCHEDULE_PERIOD_EDUCATION_DAYS_LENGTH, //к-во учебных дней
-    //?? возьмем две недели?
     EDUCATION_WEEKDAYS,
     NUM_OF_EVENTS_PER_DAY
 );
