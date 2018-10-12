@@ -2,8 +2,8 @@
 
 
 class KeyValueMapStorage implements Countable, Iterator, ArrayAccess {
-    private $storageKeys; //обьекты класса
-    private $storageValues; //коефициенты - массив?
+    private $storageKeys; //обьекты класса ScheduleEntry - массив
+    private $storageValues; //коефициенты
 
     public function __construct() {
         $this->storageKeys = new SplObjectStorage();
@@ -57,22 +57,23 @@ class KeyValueMapStorage implements Countable, Iterator, ArrayAccess {
 
         return $this->storageValues[$value];
     }
-//$n - пар для распеределения , из times. ????
+//$n - пар для распеределения , из times?
+// //вернет коллекцию в порядке убывания коефициентов
     public function topByValue($n, $randomize = false) {
         $result = new KeyValueMapStorage();
-        $sortedValues = array_keys($this->storageValues); // ключи по коеф?
-        rsort($sortedValues); //от большего к меньшему
+        $sortedValues = array_keys($this->storageValues); // вернет коефициенты??
+        rsort($sortedValues); //от большего к меньшему сортирвка
 
         $currentIndex = 0;
         $resultSize = 0;
-        $possibleValuesVariants = count($sortedValues);
+        $possibleValuesVariants = count($sortedValues); //
 
         while ($resultSize <= $n && $currentIndex < $possibleValuesVariants) {
             $value = $sortedValues[$currentIndex];
             $keysObject = $this->getKeysByValue($value);
 
             if ($randomize === true) {
-                shuffle($keysObject);
+                shuffle($keysObject); // нужно перемешать чтобы не раставило оди и те же пары подряд
             }
 
             foreach ($keysObject as $keyObject) {

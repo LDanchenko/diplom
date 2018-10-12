@@ -140,7 +140,8 @@ function calculateBatchSize(...$values) {
     return ceil(max($values));
 }
 
-//пересечение по времени - конфликты?
+//пересечение по времени
+//collection - уже распределденное
 function clsHasTimeIntersect($collection, ScheduleEntry $value) {
     $time = $value->getTime(); //время взяли из сборного обьекта
     $lecturer = $value->getLecturer(); //препод
@@ -148,7 +149,7 @@ function clsHasTimeIntersect($collection, ScheduleEntry $value) {
 
     foreach ($collection as $entry) { // collection - уже созданное расписание
         if ($collection instanceof KeyValueMapStorage) { //логика не понятна?
-            $entry = $entry[0];
+            $entry = $entry[0]; //[0] - etnry object [1] - coef
         }
 
         if (($entry->getTime() === $time && $entry->getLecturer() === $lecturer) || //препод в определенное время уже занят
@@ -197,7 +198,7 @@ function calculateCoefficients($restricts, $time, $groups, $disciplines, $lectur
 
     return $coefficients;
 }
-
+//!!!!тут прокоментить
 function distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lecturers) {
     $distributedSchedule = new KeyValueMapStorage();//сделали обьект ключ значение
     $scheduleMaxSize = count($eventsTimes); //кол-во обьектов time в массиве
@@ -215,15 +216,15 @@ function distributeEvents($eventsTimes, $restricts, $groups, $disciplines, $lect
         foreach ($eventsTimes as $time) { //перебираем обьекты Time
             //тут передалть для GroupTimeAvailable уже готовое рассписание?
             $coefficients = calculateCoefficients($restricts, $time, $groups, $disciplines, $lecturers); //считаем коефициенты для заданых данных
-            $coefficients = $coefficients->topByValue($batchSize);
+            $coefficients = $coefficients->topByValue($batchSize); //вернет коллекцию в порядке убывания коефициентов
             $entriesToDistribute->extend($coefficients);
         }
 
         $batchToDistributeCount = count($entriesToDistribute);
-        $entriesToDistribute = $entriesToDistribute->topByValue($batchToDistributeCount, true); //???
+        $entriesToDistribute = $entriesToDistribute->topByValue($batchToDistributeCount, true); //тут перемешали коефициенты
 //???
         foreach ($entriesToDistribute as $item) {
-            if (count($distributedSchedule) >= $scheduleMaxSize) {
+            if (count($distributedSchedule) >= $scheduleMaxSize) { //
                 break;
             }
 
